@@ -1,8 +1,0 @@
-CACHE MANIFEST
-
-# Explicitly cached 'master entries'.
-CACHE:
-index.html
-styles/main.css
-scripts/main.js
-scripts/spin.min.js

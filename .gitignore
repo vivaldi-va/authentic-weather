@@ -10,7 +10,7 @@ img
 js
 tools
 index.html
-app/dist
-app/node_modules
-app/.sass-cache
-app/.tmp
+dist
+node_modules
+.sass-cache
+.tmp
