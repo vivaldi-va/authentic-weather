@@ -1,0 +1,16 @@
+# Include your project-specific ignores in this file
+# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+
+
+.idea
+css
+doc
+font
+img
+js
+tools
+index.html
+app/dist
+app/node_modules
+app/.sass-cache
+app/.tmp
