@@ -70,27 +70,41 @@ function getConditions(city) {
             type: 'get',
             dataType: 'jsonp',
             success: function (location) {
-                spinner.stop();
-                console.log(latitude + ', ' + longitude);
-                console.log(location);
-                console.log(city = location.location.city);
-                city = location.location.city;
-                $.ajax({
-                    url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions/q/' + city + '.json',
-                    type: 'get',
-                    dataType: 'jsonp',
-                    success: function (data) {
-                        console.log(data);
 
-                        setText(data.current_observation.temp_c, data.current_observation.icon, data.current_observation.display_location.city);
+                if (location.response.error === undefined) {
 
+                    console.log(latitude + ', ' + longitude);
+                    console.log(location);
+                    console.log(city = location.location.city);
 
-                    },
-                    fail: function(data, error) {
-                        $("#message").html("something went wrong");
-                        $("#message").append('<small>restart this shit (sorry)</small>');
-                    }
-                });
+                    city = location.location.city;
+                    $.ajax({
+                        //url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions/q/' + city + '.json',
+                        url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions' + location.location.l + '.json',
+                        type: 'get',
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            console.log(data);
+                            spinner.stop();
+
+                            setText(data.current_observation.temp_c, data.current_observation.icon, data.current_observation.display_location.city);
+                            if (location.location.country == 'US') {
+                                $(".degrees").html(data.current_observation.temp_f + "&deg;");
+                            } else {
+                                $(".degrees").html(data.current_observation.temp_c + "&deg;");
+                            }
+
+                        },
+                        fail: function(data, error) {
+                            spinner.stop();
+                            $("#message").html("something went wrong");
+                            $("#message").append('<small>restart this shit (sorry)</small>');
+                        }
+                    });
+                } else {
+                    $("#message").html("something went wrong");
+                    $("#message").append('<small>' + location.response.error.description + ', sorry.</small>');
+                }
 
 
 
@@ -127,16 +141,25 @@ function setText(temp, condition, city) {
         $("#message").removeClass('grey');
         $("#message").removeClass('cold');
         $("#message").addClass('warm');
+        $("#celsius").removeClass('grey');
+        $("#celsius").removeClass('cold');
+        $("#celsius").addClass('warm');
     }
     else if (temp <= temperate && temp > cold) {
         $("#message").removeClass('cold');
         $("#message").removeClass('warm');
         $("#message").addClass('grey');
+        $("#celsius").removeClass('cold');
+        $("#celsius").removeClass('warm');
+        $("#celsius").addClass('grey');
     }
     else {
         $("#message").addClass('cold');
         $("#message").removeClass('grey');
         $("#message").removeClass('warm');
+        $("#celsius").addClass('cold');
+        $("#celsius").removeClass('grey');
+        $("#celsius").removeClass('warm');
     }
 
     //cityString = city || 'Earth';
@@ -570,7 +593,7 @@ function setText(temp, condition, city) {
                      */
 
                     conditionsMessageArray = [
-                        "It's <em>cloudy</em>, dark and a cold"
+                        "It's <em>cloudy</em>, dark and cold"
                     ];
 
                     conditionsDescArray = [
@@ -2192,9 +2215,26 @@ function getLocation() {
         var timeoutVal = 10 * 1000 * 1000;
         navigator.geolocation.getCurrentPosition(
             function (position) {
+                console.log(position);
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
                 getConditions();
+            },
+            function(err) {
+                console.log(err);
+                spinner.stop();
+                if (err.code == 1) {
+                    $("#message").html("Location sharing not allowed here");
+                    $("#message").append('<small>Please give me permissions</small>');
+                }
+                else if (err.code == 2) {
+                    $("#message").html("Can&rsquo;t find your location");
+                    $("#message").append('<small>Someone hacked the satellite</small>');
+                }
+                else if (err.code == 3) {
+                    $("#message").html("Can&rsquo;t find your location");
+                    $("#message").append('<small>Someone hacked the satellite</small>');
+                }
             }
         );
     } else {
@@ -2249,13 +2289,14 @@ window.addEventListener('load', function () {
     init();
 });
 
-$('#app').click(function(){
+$(window).click(function(){
     console.log('fdsa');
-    getLocation();
+    //getLocation();
+    $('#celsius').toggleClass('show');
 });
 
 
-$(window).on("click", "#app", function(){
+$(window).on("click", ".degrees", function(){
     console.log('herp');
 });
 

@@ -193,21 +193,58 @@ body {
   //display: none;
   position: absolute;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
   z-index: 1011;
-  width: 0;
-  heigth: 0;
 
   background: $black;
 
-  opacity: 0.5;
+  opacity: 0;
+
+  -webkit-transition: opacity 0.2s ease-in;
+  -moz-transition: opacity 0.2s ease-in;
+  -ms-transition: opacity 0.2s ease-in;
+  -o-transition: opacity 0.2s ease-in;
+  transition: opacity 0.2s ease-in;
+
+  &.show {
+    opacity: 0.75;
+  }
 
   &.cold {
     background: $blue;
+
+    .degrees {
+      color: darken($blue, 35%);
+    }
   }
 
   &.warm {
     background: $orange;
+    .degrees {
+      color: darken($orange, 35%);
+    }
+  }
+
+  .degrees {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    width: auto;
+    height: 1em;
+    margin: auto;
+    color: $white;
+    font-size: 6em;
+    font-weight: 700;
+    line-height: 1;
+
+    text-align: center;
+
+    text-shadow:  none;
   }
 
 }
