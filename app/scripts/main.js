@@ -95,7 +95,7 @@ function getConditions(city) {
                             }
 
                         },
-                        fail: function(data, error) {
+                        error: function(data, error) {
                             spinner.stop();
                             $("#message").html("something went wrong");
                             $("#message").append('<small>restart this shit (sorry)</small>');
@@ -109,8 +109,10 @@ function getConditions(city) {
 
 
             },
-            fail: function (data, error) {
-                console.log('shit done failed');
+            error: function (error) {
+                spinner.stop();
+                $("#message").html("something went wrong");
+                $("#message").append('<small>restart this shit (sorry)</small>');
             }
         });
 
@@ -1495,12 +1497,11 @@ function setText(temp, condition, city) {
             }
             else if (temp < temperate) {
                 conditionsMessageArray = [
-                    "It's <em>mostlysunny</em>, and not bad"
+                    "It's <em>mostly sunny</em>, and not bad"
                 ];
 
                 conditionsDescArray = [
-                    "It's pretty ok",
-                    "A nice summer's day in England"
+                    "It's pretty ok really"
                 ];
 
                 if (time > 18 || time < 6) {
@@ -1547,11 +1548,11 @@ function setText(temp, condition, city) {
             else if (temp < roasting) {
 
                 conditionsMessageArray = [
-                    "It's <em>sunny</em> and roasting"
+                    "It's <em>mostly sunny</em> and fucking roasting!"
                 ];
 
                 conditionsDescArray = [
-                    "Did you wake up in Venus?"
+                    "Holy fuck"
                 ];
 
                 if (time > 18 || time < 6) {
@@ -1581,7 +1582,7 @@ function setText(temp, condition, city) {
             else if (temp < freezing) {
 
                 conditionsMessageArray = [
-                    "It's raining and <em>freezing!</em>"
+                    "It's <em>raining</em> and freezing!"
                 ];
 
                 conditionsDescArray = [
@@ -1593,7 +1594,7 @@ function setText(temp, condition, city) {
             else if (temp < cold) {
 
                 conditionsMessageArray = [
-                    "It's just <em>cold</em> and raining"
+                    "It's just cold and <em>raining</em>"
                 ];
 
                 conditionsDescArray = [
@@ -1605,12 +1606,11 @@ function setText(temp, condition, city) {
             }
             else if (temp < temperate) {
                 conditionsMessageArray = [
-                    "raining and <em>not warm</em>"
+                    "It's <em>raining</em> and not warm"
                 ];
 
                 conditionsDescArray = [
-                    "Bring your umbrella",
-                    "Hope you brought a jacket"
+                    "Bring your umbrella"
                 ];
 
                 conditionsIcon = 'R';
@@ -1618,7 +1618,7 @@ function setText(temp, condition, city) {
             else if (temp < warm) {
 
                 conditionsMessageArray = [
-                    "<em>Warm</em> and raining"
+                    "warm and <em>raining</em>"
                 ];
 
                 conditionsDescArray = [
@@ -1630,7 +1630,7 @@ function setText(temp, condition, city) {
             else if (temp < hot) {
 
                 conditionsMessageArray = [
-                    "It's wet, and <em>hot</em>"
+                    "It's <em>raining</em>, and hot"
                 ];
 
                 conditionsDescArray = [
@@ -1663,7 +1663,7 @@ function setText(temp, condition, city) {
                 ];
 
                 conditionsDescArray = [
-                    "Did the atmosphere freeze too?"
+                    "Surely not."
                 ];
 
                 conditionsIcon = 'X';
@@ -1688,9 +1688,7 @@ function setText(temp, condition, city) {
                 ];
 
                 conditionsDescArray = [
-                    "It couldn't get much worse",
-                    "You're going to freeze to the bone",
-                    "Fuck this"
+                    "Fuck this."
                 ];
 
                 conditionsIcon = 'X';
@@ -1751,7 +1749,7 @@ function setText(temp, condition, city) {
 
             if (temp < siberia) {
                 conditionsMessageArray = [
-                    "It's <em>snowing</em> out there"
+                    "It's fucking <em>snowing</em> out there"
                 ];
 
                 conditionsDescArray = [
@@ -1764,11 +1762,11 @@ function setText(temp, condition, city) {
             else if (temp < freezing) {
 
                 conditionsMessageArray = [
-                    "<em>Snow</em> everywhere!"
+                    "<em>Snow</em> fucking everywhere!"
                 ];
 
                 conditionsDescArray = [
-                    "Oh and it's cold as all hell"
+                    "Oh, and it's cold as all hell"
                 ];
 
                 conditionsIcon = 'W';
@@ -2003,13 +2001,11 @@ function setText(temp, condition, city) {
             }
             else if (temp < temperate) {
                 conditionsMessageArray = [
-                    "<em>Thundering</em> and temperate"
+                    "<em>Thundering</em> but not too cold."
                 ];
 
                 conditionsDescArray = [
-                    "Your pets are going to love this",
-                    "BOOM",
-                    "Enjoy the light show"
+                    "Not a good day for fishing"
                 ];
 
                 conditionsIcon = 'W';
@@ -2021,7 +2017,7 @@ function setText(temp, condition, city) {
                 ];
 
                 conditionsDescArray = [
-                    "Summer storms are here"
+                    "Rangle in the pets"
                 ];
 
                 conditionsIcon = 'W';
@@ -2059,7 +2055,7 @@ function setText(temp, condition, city) {
         case 'unknown':
 
             conditionsMessageArray = [
-                "I dont know what the fuck it is"
+                "I don't know what the fuck it is"
             ];
 
             conditionsDescArray = [
