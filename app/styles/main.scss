@@ -121,12 +121,13 @@ body {
 
   position: absolute;
   right: 1.6rem;
-  bottom: 1.6rem;
+  bottom: 3.2rem;
   left: 1.6rem;
 
-  font-size: 4.5em;
+  font-size: 4.8rem;
   font-weight: bold;
-  line-height: 1.15;
+  line-height: 1;
+  letter-spacing: -2px;
   color: $muted;
 
   &:first-letter {
@@ -149,10 +150,12 @@ body {
 
   small {
     float: left;
-    font-size: 0.2em;
-    font-weight: 400;
-    text-shadow: none;
     width: 100%;
+    margin: 1em 0 0;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-shadow: none;
   }
 
 }
@@ -207,4 +210,24 @@ body {
     background: $orange;
   }
 
+}
+
+@media screen and (min-height: 420px) and (orientation: portrait) {
+  #message {
+    font-size: 5.6rem;
+
+    small {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+@media screen and (min-height: 520px) and (orientation: portrait) {
+  #message {
+    font-size: 6.4rem;
+
+    small {
+      font-size: 1.4rem;
+    }
+  }
 }
