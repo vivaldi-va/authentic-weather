@@ -1,4 +1,8 @@
-var latitude, longitude, temp;
+(function(){
+    "use strict";
+
+
+var latitude, longitude;
 var spinnerTarget = document.getElementById('app');
 
 var spinnerOpts = {
@@ -21,44 +25,6 @@ var spinnerOpts = {
 };
 
 var spinner = new Spinner(spinnerOpts);
-
-
-
-function checkAppCache() {
-    var appCache = window.applicationCache;
-
-    console.log(window.applicationCache.status);
-    /*switch (appCache.status) {
-     case 0: // UNCACHED == 0
-     return 'UNCACHED';
-     break;
-     case 1: // IDLE == 1
-     return 'IDLE';
-     break;
-     case 2: // CHECKING == 2
-     return 'CHECKING';
-     break;
-     case 3: // DOWNLOADING == 3
-     return 'DOWNLOADING';
-     break;
-     case 4:  // UPDATEREADY == 4
-     return 'UPDATEREADY';
-     break;
-     case 5: // OBSOLETE == 5
-     return 'OBSOLETE';
-     break;
-     default:
-     return 'UKNOWN CACHE STATUS';
-     break;
-     } */
-
-    appCache.update(); // Attempt to update the user's cache.
-    if (appCache.status === 4) {
-        appCache.swapCache();  // The fetch was successful, swap in the new cache.
-    }
-}
-
-
 
 
 function getConditions(city) {
@@ -88,14 +54,14 @@ function getConditions(city) {
                             spinner.stop();
 
                             setText(data.current_observation.temp_c, data.current_observation.icon, data.current_observation.display_location.city);
-                            if (location.location.country == 'US') {
+                            if (location.location.country === 'US') {
                                 $(".degrees").html(data.current_observation.temp_f + "&deg;");
                             } else {
                                 $(".degrees").html(data.current_observation.temp_c + "&deg;");
                             }
 
                         },
-                        error: function(data, error) {
+                        error: function() {
                             spinner.stop();
                             $("#message").html("something went wrong");
                             $("#message").append('<small>restart this shit (sorry)</small>');
@@ -109,7 +75,7 @@ function getConditions(city) {
 
 
             },
-            error: function (error) {
+            error: function () {
                 spinner.stop();
                 $("#message").html("something went wrong");
                 $("#message").append('<small>restart this shit (sorry)</small>');
@@ -126,20 +92,21 @@ function setText(temp, condition, city) {
 
     var roasting, hot, warm, temperate, cold, freezing, siberia;
 
-    roasting = 50;
-    hot = 40;
-    warm = 30;
-    temperate = 20;
-    cold = 10;
-    freezing = -10;
-    siberia = -20;
+    roasting = temp > 38;
+    hot = 28 < temp && temp <= 38;
+    warm = 18 < temp && temp <= 28;
+    temperate = 10 < temp && temp <= 18;
+    cold = 2 < temp && temp <= 10;
+    freezing = -10 < temp && temp <= 2;
+    siberia = temp && temp < -10;
 
+    console.log(roasting + " " + hot + " " + warm + " " + temperate + " " + cold + " " + freezing + " " + siberia);
     var time = new Date().getHours();
     console.log(time);
     if (temp === null) {
         tempMessage = ')';
     }
-    else if(temp > temperate) {
+    else if(warm || hot || roasting) {
         $("#message").removeClass('grey');
         $("#message").removeClass('cold');
         $("#message").addClass('warm');
@@ -147,7 +114,7 @@ function setText(temp, condition, city) {
         $("#celsius").removeClass('cold');
         $("#celsius").addClass('warm');
     }
-    else if (temp <= temperate && temp > cold) {
+    else if (temperate) {
         $("#message").removeClass('cold');
         $("#message").removeClass('warm');
         $("#message").addClass('grey');
@@ -193,7 +160,7 @@ function setText(temp, condition, city) {
         case 'clear':
             console.log("it's clear, probably");
 
-            if (temp < siberia) {
+            if (siberia) {
                 console.log("siberia");
 
                 if (day) {
@@ -237,7 +204,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
                 console.log("freezimg");
 
 
@@ -271,7 +238,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
 
                 if (day) {
@@ -305,7 +272,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp <= temperate) {
+            else if (temperate) {
 
                 if (day) {
                     /*
@@ -342,7 +309,7 @@ function setText(temp, condition, city) {
 
 
             }
-            else if (temp < warm) {
+            else if (warm) {
 
 
                 if (day) {
@@ -379,7 +346,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'C';
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
 
                 if (day) {
@@ -415,7 +382,7 @@ function setText(temp, condition, city) {
                 }
 
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
 
                 if (day) {
@@ -466,7 +433,7 @@ function setText(temp, condition, city) {
             break;
         case 'cloudy':
 
-            if (temp < siberia) {
+            if (siberia) {
 
 
 
@@ -501,7 +468,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
 
                 if (day) {
@@ -538,7 +505,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 if (day) {
                     /*
@@ -573,7 +540,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp <= temperate) {
+            else if (temperate) {
                 if (day) {
                     /*
                      DAY
@@ -607,7 +574,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp > temperate) {
+            else if (temperate) {
 
 
                 if (day) {
@@ -647,7 +614,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp > hot) {
+            else if (hot) {
 
 
                 if (day) {
@@ -684,7 +651,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'Y';
             }
-            else if (temp >= roasting) {
+            else if (roasting) {
 
 
                 if (day) {
@@ -728,7 +695,7 @@ function setText(temp, condition, city) {
             break;
 
         case 'flurries':
-            if (temp < siberia) {
+            if (siberia) {
 
 
                 if (day) {
@@ -764,7 +731,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'U';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
 
 
@@ -801,7 +768,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'U';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
 
 
@@ -836,7 +803,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'U';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "<em>snow</em> at this time of the year?"
                 ];
@@ -848,7 +815,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'U';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "This is just getting <em>silly</em>"
@@ -865,7 +832,7 @@ function setText(temp, condition, city) {
             break;
         case 'fog':
 
-            if (temp < siberia) {
+            if (siberia) {
 
 
 
@@ -907,7 +874,7 @@ function setText(temp, condition, city) {
                 }
 
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
 
                 if (day) {
@@ -942,7 +909,7 @@ function setText(temp, condition, city) {
 
                 }
             }
-            else if (temp < cold) {
+            else if (cold) {
 
 
 
@@ -981,7 +948,7 @@ function setText(temp, condition, city) {
 
 
             }
-            else if (temp < temperate) {
+            else if (temperate) {
 
                 if (day) {
                     /*
@@ -1018,7 +985,7 @@ function setText(temp, condition, city) {
 
                 }
             }
-            else if (temp < warm) {
+            else if (warm) {
 
 
 
@@ -1055,7 +1022,7 @@ function setText(temp, condition, city) {
 
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
 
                 if (day) {
@@ -1089,7 +1056,7 @@ function setText(temp, condition, city) {
 
                 }
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>foggy</em> and roasting"
@@ -1111,7 +1078,7 @@ function setText(temp, condition, city) {
             break;
         case 'hazy':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and fucking FREEZING!"
                 ];
@@ -1122,7 +1089,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and freezing!"
@@ -1134,7 +1101,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and cold"
@@ -1146,7 +1113,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and ok"
                 ];
@@ -1157,7 +1124,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and warm"
@@ -1169,7 +1136,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and hot"
@@ -1181,7 +1148,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'E';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>hazy</em> and roasting"
@@ -1201,7 +1168,7 @@ function setText(temp, condition, city) {
         case 'mostlycloudy':
 
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and fucking FREEZING!"
                 ];
@@ -1212,7 +1179,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and freezing!"
@@ -1224,7 +1191,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and cold"
@@ -1237,7 +1204,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and ok",
                     "Some <em>clouds</em>, but not too cold"
@@ -1251,7 +1218,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and warm",
@@ -1266,7 +1233,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and hot"
@@ -1279,7 +1246,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'N';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>cloudy</em> and roasting"
@@ -1298,7 +1265,7 @@ function setText(temp, condition, city) {
             break;
         case 'mostlysunny':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's <em>probably sunny</em>, and fucking FREEZING!"
                 ];
@@ -1318,7 +1285,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "There's a lot of <em>sun</em> but it's freezing!"
@@ -1339,7 +1306,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "There's <em>sun, few clouds</em>, and it's cold"
@@ -1358,7 +1325,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>mostly sunny</em> and not bad"
                 ];
@@ -1376,7 +1343,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's mostly <em>sunny</em> and warm"
@@ -1395,7 +1362,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>sunny</em> with some clouds, and hot"
@@ -1412,7 +1379,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>sunny</em> and roasting"
@@ -1436,7 +1403,7 @@ function setText(temp, condition, city) {
         case 'partlysunny':
 
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "There's a <em>bit of sun</em>, it's fucking FREEZING!"
                 ];
@@ -1457,7 +1424,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>kinda sunny</em> and freezing!"
@@ -1477,7 +1444,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "There's <em>sun, clouds</em> and it's cold"
@@ -1495,7 +1462,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>mostly sunny</em>, and not bad"
                 ];
@@ -1511,7 +1478,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's <em>mostly sunny</em>, and warm"
@@ -1528,7 +1495,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>sunny</em> with some clouds, and hot"
@@ -1545,7 +1512,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>mostly sunny</em> and fucking roasting!"
@@ -1567,7 +1534,7 @@ function setText(temp, condition, city) {
             break;
         case 'rain':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's raining and <em>fucking FREEZING!</em>"
                 ];
@@ -1579,7 +1546,7 @@ function setText(temp, condition, city) {
                 conditionsIcon = 'R';
 
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>raining</em> and freezing!"
@@ -1591,7 +1558,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'R';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's just cold and <em>raining</em>"
@@ -1604,7 +1571,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'R';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>raining</em> and not warm"
                 ];
@@ -1615,7 +1582,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'R';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "warm and <em>raining</em>"
@@ -1627,7 +1594,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'R';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>raining</em>, and hot"
@@ -1640,7 +1607,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'R';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's raining and <em>roasting hot</em>"
@@ -1657,7 +1624,7 @@ function setText(temp, condition, city) {
             break;
         case 'sleet':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "<em>Freezing rain</em> and fucking arctic temperatures!"
                 ];
@@ -1669,7 +1636,7 @@ function setText(temp, condition, city) {
                 conditionsIcon = 'X';
 
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "Enjoy the <em>frozen rain</em> and freezing cold!"
@@ -1681,7 +1648,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'X';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's cold with <em>freezing rain</em>"
@@ -1693,7 +1660,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'X';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "<em>Wet snow</em> and kinda cold"
                 ];
@@ -1705,7 +1672,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'X';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "Warm and <em>sleeting</em>"
@@ -1717,7 +1684,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'X';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>sleeting</em>, and hot"
@@ -1729,7 +1696,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'X';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>sleet</em> and roasting?"
@@ -1747,7 +1714,7 @@ function setText(temp, condition, city) {
             break;
         case 'snow':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's fucking <em>snowing</em> out there"
                 ];
@@ -1759,7 +1726,7 @@ function setText(temp, condition, city) {
                 conditionsIcon = 'W';
 
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "<em>Snow</em> fucking everywhere!"
@@ -1771,7 +1738,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's fucking <em>snowing</em>"
@@ -1784,7 +1751,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "wet <em>Snow</em>, awesome"
                 ];
@@ -1796,7 +1763,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "Warm and <em>snowing</em>"
@@ -1808,7 +1775,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>snowing</em>, and hot"
@@ -1820,7 +1787,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>snowing</em> and roasting?"
@@ -1838,7 +1805,7 @@ function setText(temp, condition, city) {
             break;
         case 'sunny':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's <em>clear</em> and fucking FREEZING!"
                 ];
@@ -1854,7 +1821,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>clear</em> and freezing!"
@@ -1868,7 +1835,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's <em>clear</em> and sunny, but cold"
@@ -1882,7 +1849,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'G';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>clear</em> and a bit cold"
                 ];
@@ -1900,7 +1867,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'B';
                 }
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's <em>warm</em> and clear"
@@ -1919,7 +1886,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'B';
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>hot</em> and clear"
@@ -1938,7 +1905,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'B';
                 }
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>roasting hot</em> and clear"
@@ -1963,7 +1930,7 @@ function setText(temp, condition, city) {
             break;
         case 'tstorms':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "<em>Thundering</em> and fucking beyond freezing"
                 ];
@@ -1975,7 +1942,7 @@ function setText(temp, condition, city) {
                 conditionsIcon = 'W';
 
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "<em>Thunderstorms</em> and freezing cold!"
@@ -1987,7 +1954,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "It's cold and <em>thundering</em>"
@@ -1999,7 +1966,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "<em>Thundering</em> but not too cold."
                 ];
@@ -2010,7 +1977,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "Warm and <em>thundering</em>"
@@ -2022,7 +1989,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>thundering</em>, and hot"
@@ -2034,7 +2001,7 @@ function setText(temp, condition, city) {
 
                 conditionsIcon = 'W';
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>thundering</em> and roasting!"
@@ -2069,7 +2036,7 @@ function setText(temp, condition, city) {
             break;
         case 'partlycloudy':
 
-            if (temp < siberia) {
+            if (siberia) {
                 conditionsMessageArray = [
                     "It's a bit sunny, but <em>fucking FREEZING!</em>"
                 ];
@@ -2085,7 +2052,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < freezing) {
+            else if (freezing) {
 
                 conditionsMessageArray = [
                     "It's <em>kinda sunny</em> and freezing!"
@@ -2104,7 +2071,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < cold) {
+            else if (cold) {
 
                 conditionsMessageArray = [
                     "There's <em>sun, clouds</em> and it's cold"
@@ -2121,7 +2088,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < temperate) {
+            else if (temperate) {
                 conditionsMessageArray = [
                     "It's <em>mostly sunny</em> and not bad"
                 ];
@@ -2138,7 +2105,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < warm) {
+            else if (warm) {
 
                 conditionsMessageArray = [
                     "It's mostly <em>sunny</em> and warm"
@@ -2155,7 +2122,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < hot) {
+            else if (hot) {
 
                 conditionsMessageArray = [
                     "It's <em>sunny</em> with some clouds, and hot"
@@ -2172,7 +2139,7 @@ function setText(temp, condition, city) {
                     conditionsIcon = 'H';
                 }
             }
-            else if (temp < roasting) {
+            else if (roasting) {
 
                 conditionsMessageArray = [
                     "It's <em>sunny</em> and <em>roasting</em>"
@@ -2206,9 +2173,8 @@ function setText(temp, condition, city) {
 
 }
 
-function getLocation() {
+    function getLocation() {
     if (navigator.geolocation) {
-        var timeoutVal = 10 * 1000 * 1000;
         navigator.geolocation.getCurrentPosition(
             function (position) {
                 console.log(position);
@@ -2219,15 +2185,15 @@ function getLocation() {
             function(err) {
                 console.log(err);
                 spinner.stop();
-                if (err.code == 1) {
+                if (err.code === 1) {
                     $("#message").html("Location sharing not allowed here");
                     $("#message").append('<small>Please give me permissions</small>');
                 }
-                else if (err.code == 2) {
+                else if (err.code === 2) {
                     $("#message").html("Can&rsquo;t find your location");
                     $("#message").append('<small>Someone hacked the satellite</small>');
                 }
-                else if (err.code == 3) {
+                else if (err.code === 3) {
                     $("#message").html("Can&rsquo;t find your location");
                     $("#message").append('<small>Someone hacked the satellite</small>');
                 }
@@ -2237,36 +2203,6 @@ function getLocation() {
         $("#message").html("Where the fuck are you bro?");
     }
 }
-
-
-function swipeDown() {
-
-    var startX, startY, endX, endY;
-
-    function touchStart(event) {
-        event.preventDefault();
-        startX = event.targetTouches[0].pageX;
-        startY = event.targetTouches[0].pageY;
-    }
-
-    function touchEnd(event) {
-        event.preventDefault();
-        endX = event.targetTouches[0].pageX;
-        endY = event.targetTouches[0].pageY;
-    }
-
-    if (startY < endY || (Math.abs(startX - endX)/2 > Math.abs(startY - endY))) {
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-function openMenu() {
-
-}
-
 
 
 
@@ -2296,5 +2232,5 @@ $(window).on("click", ".degrees", function(){
     console.log('herp');
 });
 
-
+})();
 
