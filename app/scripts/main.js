@@ -69,15 +69,23 @@ function getConditions(city) {
                     });
 
 
-                    var existingForecast = JSON.parse(localStorage.forecast),
+                    var existingForecast,
                         todaysDate = new Date().getDate();
+
 
                     /*
                         check if there's a forecast in the localStorage, and if there is
                         check if it is actually today's forecast. If not, get a new one.
 
                      */
-                    if (existingForecast !== undefined || existingForecast.time === todaysDate) {
+                    if (localStorage.forecast !== undefined) {
+                        existingForecast = JSON.parse(localStorage.forecast);
+                        console.log(existingForecast);
+                        console.log(existingForecast.date);
+                    }
+
+
+                    if (existingForecast !== undefined && existingForecast.date === todaysDate) {
                         getForecast(existingForecast);
                     } else {
 
@@ -2239,22 +2247,21 @@ function setText(temp, condition, city) {
 
     function getForecast(forecast) {
 
-        (function(){
 
-            /*
-             * set the date as a key to determine whether a new forecast should be downloaded
-             */
+        console.log(forecast);
+        /*
+         * set the date as a key to determine whether a new forecast should be downloaded
+         */
 
-            forecast['date']  = new Date().getDate();
-            navigator.localStorage.setItem('forecast', forecast);
-
-        })();
+        forecast.date  = new Date().getDate();
+        localStorage.setItem('forecast', JSON.stringify(forecast));
 
 
 
 
 
-        var message, subMessage;
+
+        var message, subMessage, conditionsIcon;
 
         var temp = parseInt(forecast.high.celsius);
 
@@ -2273,46 +2280,54 @@ function setText(temp, condition, city) {
         switch (forecast.icon) {
             case 'clear':
                 console.log("it's clear, probably");
-
+                conditionsIcon = 'B';
                 message = "it'll be clear";
+
                 break;
             case 'cloudy':
-
+                conditionsIcon = 'Y';
                 message = "it's just gonna be grey";
                 break;
 
             case 'flurries':
+                conditionsIcon = 'U';
                 message = "It's gonna be windy and snowing";
                 break;
             case 'fog':
-
+                conditionsIcon = 'J';
                 message = "It'll be foggy";
                 break;
             case 'hazy':
-
+                conditionsIcon = 'E';
                 message = "it'll be a bit hazy";
                 break;
             case 'mostlycloudy':
+                conditionsIcon = 'N';
                 message = "it'll be mostly cloudy";
                 break;
             case 'mostlysunny':
+                conditionsIcon = 'H';
                 message = "it'll be mostly sunshine";
                 break;
             case 'partlysunny':
+                conditionsIcon = 'H';
                 message = "it'll be a bit sunny";
                 break;
             case 'rain':
+                conditionsIcon = 'R';
                 message = "it's gonna be pissing down";
                 break;
             case 'sleet':
-
-                message = "it's gonna be frozen rain";
+                conditionsIcon = 'X';
+                message = "it's gonna be fucking frozen rain";
                 break;
             case 'snow':
+                conditionsIcon = 'W';
                 message = "it's gonna snow";
-
                 break;
             case 'sunny':
+                conditionsIcon = 'B';
+                message = "it'll be sunny";
                 break;
             case 'tstorms':
 
@@ -2320,27 +2335,32 @@ function setText(temp, condition, city) {
                 break;
             case 'unknown':
 
-
-                message = "i dont know what the fuck it'll be";
+                conditionsIcon = '0';
+                message = "i don't know what the fuck it'll be";
                 break;
             case 'partlycloudy':
-
+                conditionsIcon = 'H';
                 message = "it'll be a bit cloudy";
                 break;
 
         }
 
-        message += " and ";
+        message += " and <em>";
 
         if (warm || hot || roasting) {
             message += "nice";
+            $("#forecast-message").addClass('warm');
         } else if (temperate) {
             message += "ok";
+            $("#forecast-message").addClass('grey');
         } else {
+            $("#forecast-message").addClass('cold');
             message += "cold";
         }
+        message += "</em>";
 
         $("#forecast-message").html(message);
+        $("#forecast-icon").html(conditionsIcon);
     }
 
 
