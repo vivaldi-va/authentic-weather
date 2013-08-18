@@ -50,20 +50,31 @@
 
         <div class="wrapper">
             <div id="app-wrapper">
+
+                <div class="social" id="social">
+                    <a class="social-target twitter" href="#"></a>
+                    <a class="social-target facebook" href="#"></a>
+                </div>
+
+                <aside id="celsius"><div class="degrees">N/A</div></aside>
                 <section id="app">
                     <header>
                         <div id="icon">)</div>
                         <div id="city">No fucking clue&hellip;</div>
                     </header>
 
-                    <section id="message">
+                    <section id="message" class="message">
                         It's looking out the window for you...
                         <small>tap the window to show the temp</small>
                     </section>
                 </section>
+                <div id="forecast">
+                    <section id="forecast-message" class="message">
+                        hell if I know dude
+                        <small>It'll probably be the same</small>
+                    </section>
+                </div>
                 <nav id="menu"></nav>
-                <aside id="celsius"><div class="degrees">N/A</div></aside>
-                <aside id="social"></aside>
             </div>
         </div>
 
@@ -85,6 +96,7 @@
         <!-- build:js scripts/main.js -->
         <script src="bower_components/jquery/jquery.js"></script>
         <script src="scripts/spin.min.js"></script>
+        <script src="bower_components/hammerjs/dist/jquery.hammer.min.js"></script>
         <script src="scripts/fastclick.min.js"></script>
         <script src="scripts/main.js"></script>
         <!-- endbuild -->

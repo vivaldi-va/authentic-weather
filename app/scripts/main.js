@@ -67,6 +67,23 @@ function getConditions(city) {
                             $("#message").append('<small>restart this shit (sorry)</small>');
                         }
                     });
+
+                    $.ajax({
+                        //url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions/q/' + city + '.json',
+                        url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/forecast' + location.location.l + '.json',
+                        type: 'get',
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            console.log(data);
+                            //$("#forecast-message").html("My crystal ball says...");
+                            //$("#forecast-message").append('<small>' + data.forecast.txt_forecast.forecastday[0].fcttext_metric + '</small>');
+
+                            getForecast(data.forecast.simpleforecast.forecastday[0]);
+                        },
+                        error: function(err) {
+                            console.log(err);
+                        }
+                    });
                 } else {
                     $("#message").html("something went wrong");
                     $("#message").append('<small>' + location.response.error.description + ', sorry.</small>');
@@ -2204,6 +2221,95 @@ function setText(temp, condition, city) {
     }
 }
 
+    function getForecast(forecast) {
+        var message, subMessage;
+
+        var temp = parseInt(forecast.high.celsius);
+
+        var roasting, hot, warm, temperate, cold, freezing, siberia;
+
+        roasting = temp > 38;
+        hot = 28 < temp && temp <= 38;
+        warm = 18 < temp && temp <= 28;
+        temperate = 10 < temp && temp <= 18;
+        cold = 2 < temp && temp <= 10;
+        freezing = -10 < temp && temp <= 2;
+        siberia = temp && temp < -10;
+
+
+        switch (forecast.icon) {
+            case 'clear':
+                console.log("it's clear, probably");
+
+                message = "it'll be clear";
+                break;
+            case 'cloudy':
+
+                message = "it's just gonna be grey";
+                break;
+
+            case 'flurries':
+                message = "It's gonna be windy and snowing";
+                break;
+            case 'fog':
+
+                message = "It'll be foggy";
+                break;
+            case 'hazy':
+
+                message = "it'll be a bit hazy";
+                break;
+            case 'mostlycloudy':
+                message = "it'll be mostly cloudy";
+                break;
+            case 'mostlysunny':
+                message = "it'll be mostly sunshine";
+                break;
+            case 'partlysunny':
+                message = "it'll be a bit sunny";
+                break;
+            case 'rain':
+                message = "it's gonna be pissing down";
+                break;
+            case 'sleet':
+
+                message = "it's gonna be frozen rain";
+                break;
+            case 'snow':
+                message = "it's gonna snow";
+
+                break;
+            case 'sunny':
+                break;
+            case 'tstorms':
+
+                message = "it's gonna be stormy";
+                break;
+            case 'unknown':
+
+
+                message = "i dont know what the fuck it'll be";
+                break;
+            case 'partlycloudy':
+
+                message = "it'll be a bit cloudy";
+                break;
+
+        }
+
+        message += " and ";
+
+        if (warm || hot || roasting) {
+            message += "nice";
+        } else if (temperate) {
+            message += "ok";
+        } else {
+            message += "cold";
+        }
+
+        $("#forecast-message").html(message);
+    }
+
 
 
 function init() {
@@ -2224,12 +2330,70 @@ window.addEventListener('load', function () {
 $(window).click(function(){
     console.log('fdsa');
     //getLocation();
-    $('#celsius').toggleClass('show');
+    /*if (!$('#app').hasClass('up') && !$('#app').hasClass('down')) {
+        $('#celsius').toggleClass('show');
+    }*/
 });
 
 
 $(window).on("click", ".degrees", function(){
     console.log('herp');
+});
+
+var elem, swipeDown, swipeUp;
+
+    elem = document.getElementById('app-wrapper');
+    /*swipeUp = Hammer(elem).on('swipeup', function(e) {
+        e.gesture.preventDefault();
+        if ($('#app').hasClass('down')) {
+            $('#app').removeClass('down');
+        } else {
+            $('#app').addClass('up');
+            $('.social').addClass('show');
+        }
+        console.log(e);
+    });
+
+    swipeDown = Hammer(elem).on('swipedown', function(e) {
+        e.gesture.preventDefault();
+        if ($('#app').hasClass('up')) {
+            $('#app').removeClass('up');
+            $('.social').removeClass('show');
+        } else {
+            $('#app').addClass('down');
+        }
+        console.log(e);
+    }); */
+
+    Hammer(elem).on('tap', function(e) {
+        console.log(e);
+        if (!$('#app').hasClass('up') && !$('#app').hasClass('down')) {
+            $('#celsius').toggleClass('show');
+        }
+    });
+
+    Hammer(elem).on('hold', function(e) {
+        console.log(e);
+        $('#app').toggleClass('left');
+        $('#forecast').toggleClass('left');
+    });
+
+    $('.social-target').click(function(){
+        e.preventDefault();
+
+        console.log('fasdfsd');
+    });
+
+    /*
+$(window).hammer().on('swipeup', '#app-wrapper', function(e) {
+    e.gesture.preventDefault();
+    $(this).addClass('up');
+    console.log(this, e);
+});
+*/
+
+$(window).hammer().on('swipedown', '#app', function(e) {
+    $(this).removeClass('up');
 });
 
 })();
