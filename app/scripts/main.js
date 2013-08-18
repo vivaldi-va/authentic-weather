@@ -68,22 +68,38 @@ function getConditions(city) {
                         }
                     });
 
-                    $.ajax({
-                        //url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions/q/' + city + '.json',
-                        url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/forecast' + location.location.l + '.json',
-                        type: 'get',
-                        dataType: 'jsonp',
-                        success: function (data) {
-                            console.log(data);
-                            //$("#forecast-message").html("My crystal ball says...");
-                            //$("#forecast-message").append('<small>' + data.forecast.txt_forecast.forecastday[0].fcttext_metric + '</small>');
 
-                            getForecast(data.forecast.simpleforecast.forecastday[0]);
-                        },
-                        error: function(err) {
-                            console.log(err);
-                        }
-                    });
+                    var existingForecast = JSON.parse(localStorage.forecast),
+                        todaysDate = new Date().getDate();
+
+                    /*
+                        check if there's a forecast in the localStorage, and if there is
+                        check if it is actually today's forecast. If not, get a new one.
+
+                     */
+                    if (existingForecast !== undefined || existingForecast.time === todaysDate) {
+                        getForecast(existingForecast);
+                    } else {
+
+                        $.ajax({
+                            //url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/conditions/q/' + city + '.json',
+                            url: 'http://api.wunderground.com/api/4ca15b8f3c013e20/forecast' + location.location.l + '.json',
+                            type: 'get',
+                            dataType: 'jsonp',
+                            success: function (data) {
+                                console.log(data);
+                                //$("#forecast-message").html("My crystal ball says...");
+                                //$("#forecast-message").append('<small>' + data.forecast.txt_forecast.forecastday[0].fcttext_metric + '</small>');
+
+                                getForecast(data.forecast.simpleforecast.forecastday[0]);
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+
+
                 } else {
                     $("#message").html("something went wrong");
                     $("#message").append('<small>' + location.response.error.description + ', sorry.</small>');
@@ -2222,6 +2238,22 @@ function setText(temp, condition, city) {
 }
 
     function getForecast(forecast) {
+
+        (function(){
+
+            /*
+             * set the date as a key to determine whether a new forecast should be downloaded
+             */
+
+            forecast['date']  = new Date().getDate();
+            navigator.localStorage.setItem('forecast', forecast);
+
+        })();
+
+
+
+
+
         var message, subMessage;
 
         var temp = parseInt(forecast.high.celsius);
@@ -2235,6 +2267,7 @@ function setText(temp, condition, city) {
         cold = 2 < temp && temp <= 10;
         freezing = -10 < temp && temp <= 2;
         siberia = temp && temp < -10;
+
 
 
         switch (forecast.icon) {
