@@ -1,10 +1,19 @@
 {
-  "name": "app",
+  "name": "authentic-weather",
   "version": "0.0.0",
+  "homepage": "https://github.com/vivaldi-va/authentic-weather",
+  "authors": [
+    "zaccary.price <wildtangomedia@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
-    "modernizr": "~2.6.2",
-    "jquery": "~1.9.1",
-    "hammerjs": "~1.0.5"
-  },
-  "devDependencies": {}
+    "normalize-scss": "~3.0.3"
+  }
 }

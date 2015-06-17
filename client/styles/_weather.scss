@@ -1,0 +1,66 @@
+
+.weather {
+	&__primary {
+
+	}
+
+	&__Icon {
+		position: absolute;
+		top: 1.6rem;
+		left: 1.6rem;
+
+		$iconHeight: 6.4rem;
+		width: $iconHeight;
+		height: $iconHeight;
+
+		font-family: 'MeteoconsRegular';
+		font-size: 6.4rem;
+		line-height: $iconHeight;
+		color: $color-black-06;
+
+		text-align: center;
+	}
+
+	&__Location {
+		position: absolute;
+		top: 1.6rem;
+		right: 1.6rem;
+
+		width: 70%;
+		margin: 2rem 0 0;
+
+		font-size: 0.8em;
+		//line-height: 6.4rem;
+		font-weight: 400;
+		color: $color-black-06;
+
+		text-align: right;
+		text-shadow: none;
+	}
+
+
+	&__Secondary {
+		position: absolute;
+		right: 1.6rem;
+		bottom: 1.6rem;
+		left: 1.6rem;
+		color: $color-black-06;
+	}
+
+	&__Message {
+
+		font: {
+			size: 2.5em;
+			weight: bold;
+		}
+
+	}
+
+	&__SecondaryMessage {
+		display: block;
+		font: {
+			size: 0.85em;
+		}
+	}
+
+}
